@@ -1,0 +1,21 @@
+services:
+  ledger:
+    build: .
+    image: hostel-ops-ledger:latest
+    pull_policy: never
+    env_file:
+      - path: .env
+        required: false
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - default
+      - sandbox_net
+    mem_limit: 1g
+
+networks:
+  sandbox_net:
+    external: true
+    name: sandbox-init_default
