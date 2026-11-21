@@ -1,9 +1,10 @@
 # hostel-ops — Neuro-Symbolic Triple-Entry Ledger & Booking Engine
 
-Транзакционный бэкенд учёта заездов, управления состоянием номеров и тройной событийной бухгалтерии. Неструктурированные заметки дежурного администратора компилируются в строгие финансово-операционные события и допускаются в PostgreSQL (`rhino`) только после доказательства инвариантов в Z3 (`hippo`).
+Transactional backend for check-in operations, housekeeping state transitions, and triple-entry event accounting. Unstructured operator notes are compiled into strict financial-operational proposals and committed to PostgreSQL (`rhino`) only after formal invariant verification in Z3 (`hippo`).
 
-## Транзакционный и верификационный контур
+> Part of the [`sandbox-init`](https://github.com/spanskikh/sandbox-init) neuro-symbolic cluster. See [`docs/ARCHITECTURE.md`](https://github.com/spanskikh/sandbox-init/blob/main/docs/ARCHITECTURE.md) for system design and ADRs.
 
+## Transactional & Verification Flow
 ```mermaid
 flowchart TD
     NOTE[Operator Check-In Note] --> LLM[Ollama: qwen2.5-coder:7b]
@@ -17,16 +18,22 @@ flowchart TD
     Z3 -->|SAT: Audit Metric| DUCK[(hippo: DuckDB)]
 ```
 
-## Формальные инварианты (Z3)
-* **Закон сохранения (Triple-Entry Balance):** сумма всех проводок в событии строго равна нулю (`sum(amount_cents) == 0`) при положительном обороте.
-* **Отсутствие овербукинга:** полуинтервалы проживания `[ci, co)` для одной койки попарно не пересекаются (`co <= b_ci OR ci >= b_co`).
-* **Housekeeping State Machine:** заезд разрешён исключительно в статус `CLEAN`; при фиксации транзакции койка атомарно переводится в `DIRTY`.
+## Formal Invariants (Z3)
+* **Conservation Law (Triple-Entry Balance):** Sum of all ledger legs in an event equals zero (`sum(amount_cents) == 0`) with strictly positive turnover.
+* **Anti-Overbooking Guarantee:** Half-open stay intervals `[check_in, check_out)` for any `bed_id` are pairwise disjoint (`co <= b_ci OR ci >= b_co`).
+* **Housekeeping State Machine:** Check-in is permitted exclusively into `CLEAN` beds; committing atomically transitions state to `DIRTY`.
 
-## MCP-инструменты (`FastMCP` / `stdio`)
-* `audit_hostel_checkin` — формальная проверка события заезда и бухгалтерских проводок через Z3 и состояние БД.
-* `ingest_operator_checkin_note` — парсинг заметки администратора, верификация инвариантов в Z3 и атомарная запись в PostgreSQL.
+## Sample CEGIS Execution
+```text
+CEGIS Converged: True in 1 iter(s)
+  Committed to rhino PostgreSQL! Bed state transitioned: CLEAN -> DIRTY
+```
 
-## Запуск и QA-гейт
+## MCP Tools (`FastMCP` / `stdio`)
+* `audit_hostel_checkin` — Formal Z3 verification of check-in intervals, room state, and triple-entry balance.
+* `ingest_operator_checkin_note` — Parses natural-language check-in notes, verifies invariants in Z3, and commits atomically to PostgreSQL.
+
+## Quickstart & QA Gate
 ```bash
 docker compose build ledger
 docker compose run --rm ledger sh -c "ruff check src tests && mypy src tests && pytest -v"
