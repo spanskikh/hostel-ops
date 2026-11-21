@@ -34,6 +34,7 @@ CEGIS Converged: True in 1 iter(s)
 ## MCP Tools (`FastMCP` / `stdio`)
 * `audit_hostel_checkin` — Formal Z3 verification of check-in intervals, room state, and triple-entry balance.
 * `ingest_operator_checkin_note` — Parses natural-language check-in notes, verifies invariants in Z3, and commits atomically to PostgreSQL.
+* `mark_bed_cleaned` — Transitions a `DIRTY` bed back to `CLEAN` after housekeeping completion.
 
 ## Quickstart & QA Gate
 ```bash

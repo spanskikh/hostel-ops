@@ -43,5 +43,14 @@ async def ingest_operator_checkin_note(note: str, bed_id: str) -> dict[str, Any]
     }
 
 
+@mcp.tool()
+def mark_bed_cleaned(bed_id: str) -> dict[str, str]:
+    """Transition a DIRTY bed back to CLEAN in PostgreSQL after housekeeping."""
+    store = HostelClusterStore()
+    store.init_schemas()
+    new_state = store.complete_housekeeping_cleaning(bed_id)
+    return {"bed_id": bed_id, "clean_state": new_state}
+
+
 if __name__ == "__main__":
     mcp.run(transport="stdio")

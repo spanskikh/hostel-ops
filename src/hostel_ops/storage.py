@@ -23,6 +23,7 @@ class HostelClusterStore:
 
     def init_schemas(self) -> None:
         with psycopg.connect(self._pg_dsn, autocommit=True) as conn:
+            conn.execute("CREATE EXTENSION IF NOT EXISTS btree_gist;")
             conn.execute(
                 """
                 CREATE TABLE IF NOT EXISTS beds (
@@ -39,7 +40,12 @@ class HostelClusterStore:
                     bed_id VARCHAR(32) NOT NULL REFERENCES beds(bed_id),
                     guest_name VARCHAR(128) NOT NULL,
                     check_in_day INTEGER NOT NULL,
-                    check_out_day INTEGER NOT NULL
+                    check_out_day INTEGER NOT NULL,
+                    CHECK (check_in_day < check_out_day),
+                    CONSTRAINT bookings_no_overlap_excl EXCLUDE USING gist (
+                        bed_id WITH =,
+                        int4range(check_in_day, check_out_day, '[)') WITH &&
+                    )
                 );
                 """
             )
@@ -157,3 +163,22 @@ class HostelClusterStore:
             )
         finally:
             duck.close()
+
+    def complete_housekeeping_cleaning(self, bed_id: str) -> RoomCleanState:
+        """Transition a DIRTY bed back to CLEAN after housekeeping completion."""
+        with psycopg.connect(self._pg_dsn) as conn:
+            with conn.transaction():
+                row = conn.execute(
+                    "SELECT clean_state FROM beds WHERE bed_id = %s FOR UPDATE;",
+                    (bed_id,),
+                ).fetchone()
+                if row is None:
+                    raise ValueError(f"Unknown bed_id '{bed_id}'")
+                current = str(row[0])
+                if current == "MAINTENANCE":
+                    raise ValueError(f"Bed '{bed_id}' is in MAINTENANCE and cannot be marked CLEAN")
+                conn.execute(
+                    "UPDATE beds SET clean_state = 'CLEAN' WHERE bed_id = %s;",
+                    (bed_id,),
+                )
+        return "CLEAN"
