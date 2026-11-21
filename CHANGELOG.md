@@ -1,0 +1,21 @@
+# Changelog
+
+All notable changes and formal Change Requests (CRs) for `hostel-ops` are documented in this file.
+
+## [0.2.0] - 2026-11-21 — CR-004: DB-Level GiST Anti-Overbooking & Housekeeping Cycle
+### Objective & Risk Mitigated
+* **Closed Residual Risk:** Eliminated TOCTOU race conditions between Z3 verification and PostgreSQL persistence via database-engine exclusion constraints, and closed the bed housekeeping lifecycle (`DIRTY -> CLEAN`).
+* **Traceability:** Branch `feat/cr-004-db-gist-anti-overbooking` merged via `--no-ff`.
+
+### Added
+* `src/hostel_ops/storage.py`: Enabled `btree_gist` extension, added `EXCLUDE USING gist (bed_id WITH =, int4range(check_in_day, check_out_day, '[)') WITH &&)` on `bookings`, and implemented `complete_housekeeping_cleaning()` (`DIRTY -> CLEAN` with `MAINTENANCE` guard).
+* `src/hostel_ops/server.py`: `mark_bed_cleaned` FastMCP tool.
+* `tests/test_db_gist_and_housekeeping.py`: Unit tests verifying DDL exclusion constraints and housekeeping state transitions.
+
+### Verification Evidence
+* `ruff check src tests`: `All checks passed!`
+* `mypy src tests` (`--strict`): `0` issues across `8` source files.
+* `pytest -v`: `4 passed` (`80` `Hypothesis` property examples).
+
+## [0.1.0] - 2026-11-21 — Triple-Entry Ledger & Booking Engine Baseline
+* Initial Z3 zero-sum triple-entry accounting verifier, anti-overbooking interval solver, and atomic PostgreSQL + `DuckDB` persistence.
