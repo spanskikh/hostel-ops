@@ -1,5 +1,7 @@
 # hostel-ops — Neuro-Symbolic Triple-Entry Ledger & Booking Engine
 
+
+> **Change Management:** See [`CHANGELOG.md`](CHANGELOG.md) for formal Change Requests (`CR`), mitigated risks, and QA verification evidence.
 Transactional backend for check-in operations, housekeeping state transitions, and triple-entry event accounting. Unstructured operator notes are compiled into strict financial-operational proposals and committed to PostgreSQL (`rhino`) only after formal invariant verification in Z3 (`hippo`).
 
 > Part of the [`sandbox-init`](https://github.com/spanskikh/sandbox-init) neuro-symbolic cluster. See [`docs/ARCHITECTURE.md`](https://github.com/spanskikh/sandbox-init/blob/main/docs/ARCHITECTURE.md) for system design and ADRs.
