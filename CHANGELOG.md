@@ -5,7 +5,7 @@ All notable changes and formal Change Requests (CRs) for `hostel-ops` are docume
 ## [0.2.0] - 2026-11-21 — CR-004: DB-Level GiST Anti-Overbooking & Housekeeping Cycle
 ### Objective & Risk Mitigated
 * **Closed Residual Risk:** Eliminated TOCTOU race conditions between Z3 verification and PostgreSQL persistence via database-engine exclusion constraints, and closed the bed housekeeping lifecycle (`DIRTY -> CLEAN`).
-* **Traceability:** Branch `feat/cr-004-db-gist-anti-overbooking` merged via `--no-ff`.
+* **Traceability:** Branch `feat/cr-004-db-gist-anti-overbooking` merged via `--no-ff` (`e690d30`).
 
 ### Added
 * `src/hostel_ops/storage.py`: Enabled `btree_gist` extension, added `EXCLUDE USING gist (bed_id WITH =, int4range(check_in_day, check_out_day, '[)') WITH &&)` on `bookings`, and implemented `complete_housekeeping_cleaning()` (`DIRTY -> CLEAN` with `MAINTENANCE` guard).
