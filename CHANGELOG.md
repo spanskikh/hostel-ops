@@ -2,6 +2,66 @@
 
 All notable changes and formal Change Requests (CRs) for `hostel-ops` are documented in this file.
 
+## [0.6.0] - 2026-11-22 — CR-014, CR-015 & CR-016: Pre-Public Hygiene Gate, Portfolio Sync & Public CI / CycloneDX Activation
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Enforced automated pre-public secret/PII hygiene checks, synchronized `README.md` and `docs/ARCHITECTURE.md` with live `btree_gist` TOCTOU concurrency (`23P01`) and property verification metrics, and activated GitHub Actions CI + `CycloneDX` SBOM generation.
+- **Traceability:** Branches `feat/cr-014-release-hygiene-gate` (`f469b84`), `feat/cr-015-portfolio-landing-sync` (`d64daa3`), and `CR-016` CI promotion merged via `--no-ff`; releases `v0.6.0`.
+
+### Added
+- `tests/test_release_hygiene.py`: Pre-public tracked-file secret/PII scanner and CI readiness assertions.
+- `docs/ci/ci.yml` -> `.github/workflows/ci.yml` & `scripts/publish_to_github.sh`: Automated CI verification and `CycloneDX` SBOM artifact generation.
+- `README.md` & `docs/ARCHITECTURE.md`: Added empirical concurrency and property verification benchmark table.
+
+### Verification Evidence
+- `./scripts/run_logged.sh cr015_ruff`: `All checks passed!`
+- `./scripts/run_logged.sh cr015_mypy`: `Success: no issues found in 13 source files`
+- `./scripts/run_logged.sh cr015_pytest`: `26 passed, 2 deselected`
+
+## [0.6.0] - 2026-11-22 — CR-014, CR-015 & CR-016: Pre-Public Hygiene Gate, Portfolio Sync & Public CI / CycloneDX Activation
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Enforced automated pre-public secret/PII hygiene checks, synchronized `README.md` and `docs/ARCHITECTURE.md` with live `btree_gist` TOCTOU concurrency (`23P01`) and property verification metrics, and activated GitHub Actions CI + `CycloneDX` SBOM generation.
+- **Traceability:** Branches `feat/cr-014-release-hygiene-gate` (`f469b84`), `feat/cr-015-portfolio-landing-sync` (`d64daa3`), and `CR-016` CI promotion merged via `--no-ff`; releases `v0.6.0`.
+
+### Added
+- `tests/test_release_hygiene.py`: Pre-public tracked-file secret/PII scanner and CI readiness assertions.
+- `docs/ci/ci.yml` -> `.github/workflows/ci.yml` & `scripts/publish_to_github.sh`: Automated CI verification and `CycloneDX` SBOM artifact generation.
+- `README.md` & `docs/ARCHITECTURE.md`: Added empirical concurrency and property verification benchmark table.
+
+### Verification Evidence
+- `./scripts/run_logged.sh cr015_ruff`: `All checks passed!`
+- `./scripts/run_logged.sh cr015_mypy`: `Success: no issues found in 13 source files`
+- `./scripts/run_logged.sh cr015_pytest`: `26 passed, 2 deselected`
+
+## [0.6.0] - 2026-11-22 — CR-014, CR-015 & CR-016: Pre-Public Hygiene Gate, Portfolio Sync & Public CI / CycloneDX Activation
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Enforced automated pre-public secret/PII hygiene checks, synchronized `README.md` and `docs/ARCHITECTURE.md` with live `btree_gist` TOCTOU concurrency (`23P01`) and property verification metrics, and activated GitHub Actions CI + `CycloneDX` SBOM generation.
+- **Traceability:** Branches `feat/cr-014-release-hygiene-gate` (`f469b84`), `feat/cr-015-portfolio-landing-sync` (`d64daa3`), and `CR-016` CI promotion merged via `--no-ff`; releases `v0.6.0`.
+
+### Added
+- `tests/test_release_hygiene.py`: Pre-public tracked-file secret/PII scanner and CI readiness assertions.
+- `docs/ci/ci.yml` -> `.github/workflows/ci.yml` & `scripts/publish_to_github.sh`: Automated CI verification and `CycloneDX` SBOM artifact generation.
+- `README.md` & `docs/ARCHITECTURE.md`: Added empirical concurrency and property verification benchmark table.
+
+### Verification Evidence
+- `./scripts/run_logged.sh cr015_ruff`: `All checks passed!`
+- `./scripts/run_logged.sh cr015_mypy`: `Success: no issues found in 13 source files`
+- `./scripts/run_logged.sh cr015_pytest`: `26 passed, 2 deselected`
+
+## [0.6.0] - 2026-11-22 — CR-014, CR-015 & CR-016: Pre-Public Hygiene Gate, Portfolio Sync & Public CI / CycloneDX Activation
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Enforced automated pre-public secret/PII hygiene checks, synchronized `README.md` and `docs/ARCHITECTURE.md` with live `btree_gist` TOCTOU concurrency (`23P01`) and property verification metrics, and activated GitHub Actions CI + `CycloneDX` SBOM generation.
+- **Traceability:** Branches `feat/cr-014-release-hygiene-gate` (`f469b84`), `feat/cr-015-portfolio-landing-sync` (`d64daa3`), and `CR-016` CI promotion merged via `--no-ff`; releases `v0.6.0`.
+
+### Added
+- `tests/test_release_hygiene.py`: Pre-public tracked-file secret/PII scanner and CI readiness assertions.
+- `docs/ci/ci.yml` -> `.github/workflows/ci.yml` & `scripts/publish_to_github.sh`: Automated CI verification and `CycloneDX` SBOM artifact generation.
+- `README.md` & `docs/ARCHITECTURE.md`: Added empirical concurrency and property verification benchmark table.
+
+### Verification Evidence
+- `./scripts/run_logged.sh cr015_ruff`: `All checks passed!`
+- `./scripts/run_logged.sh cr015_mypy`: `Success: no issues found in 13 source files`
+- `./scripts/run_logged.sh cr015_pytest`: `26 passed, 2 deselected`
+
 ## [0.5.0] - 2026-11-22 — CR-010 & CR-013: FastMCP `stdio` Contract Harness & Normative SDLC Governance
 ### Objective & Risk Mitigated
 - **Closed Residual Risk:** Guaranteed that all agent-facing `FastMCP` `stdio` tools (`audit_hostel_checkin`, `ingest_operator_checkin_note`, `mark_bed_cleaned`) enforce strict Pydantic v2 input schemas and Z3 triple-entry accounting, anti-overbooking, and housekeeping invariants without bypassing validation gates.
