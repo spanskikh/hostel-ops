@@ -2,6 +2,22 @@
 
 All notable changes and formal Change Requests (CRs) for `hostel-ops` are documented in this file.
 
+## [0.3.0-cr007] - 2026-11-22 — CR-007: Live PostgreSQL GiST Concurrency Race Test & DDL Migration
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Caught and eliminated a live schema drift defect on `rhino` where pre-existing `v0.1.0` `bookings` tables bypassed `CREATE TABLE IF NOT EXISTS` without `bookings_no_overlap_excl`; proved under concurrent `asyncio` barrier execution that simultaneous overlapping bookings (`[10, 14)` vs `[12, 16)`) yield exactly 1 commit and 1 `ExclusionViolation` (`23P01`).
+- **Traceability:** Branch `feat/cr-007-live-gist-concurrency` merged via `--no-ff`.
+
+### Added & Fixed
+- `src/hostel_ops/storage.py`: Added idempotent `DO $$ ... ALTER TABLE bookings ADD CONSTRAINT bookings_no_overlap_excl ... $$` migration in `init_schemas()` for pre-existing tables.
+- `pyproject.toml`: Bumped version to `0.3.0`, added `[project.optional-dependencies] dev`, `pythonpath = ["src"]`, and `@pytest.mark.integration` marker.
+- `tests/test_live_gist_concurrency.py`: Barrier-synchronized concurrent race test verifying DB-level GiST exclusion and `triple_ledger` atomicity.
+
+### Verification Evidence
+- `ruff check src tests`: `All checks passed!`
+- `mypy src tests --strict`: `Success: no issues found in 9 source files`
+- `pytest -v -m "not integration"`: `4 passed, 1 deselected`
+- `pytest -v -m "integration"`: `1 passed, 4 deselected` (against live `rhino` PostgreSQL via OpenRC tunnel)
+
 ## [0.3.0-cr006] - 2026-11-22 — CR-006: Offline GitHub Actions CI & CycloneDX SBOM Blueprints
 ### Objective & Risk Mitigated
 - **Closed Residual Risk:** Standardized pre-release verification (`ruff`, `mypy --strict`, `pytest -m "not integration"`) and supply-chain `CycloneDX` SBOM generation across `hostel-ops` without triggering premature CI runs while the repository remains private.

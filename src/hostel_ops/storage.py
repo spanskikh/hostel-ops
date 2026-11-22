@@ -51,6 +51,23 @@ class HostelClusterStore:
             )
             conn.execute(
                 """
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM pg_constraint WHERE conname = 'bookings_no_overlap_excl'
+                    ) THEN
+                        ALTER TABLE bookings
+                        ADD CONSTRAINT bookings_no_overlap_excl EXCLUDE USING gist (
+                            bed_id WITH =,
+                            int4range(check_in_day, check_out_day, '[)') WITH &&
+                        );
+                    END IF;
+                END
+                $$;
+                """
+            )
+            conn.execute(
+                """
                 CREATE TABLE IF NOT EXISTS triple_ledger (
                     entry_id SERIAL PRIMARY KEY,
                     event_id VARCHAR(64) NOT NULL,
