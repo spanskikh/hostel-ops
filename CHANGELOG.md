@@ -2,6 +2,22 @@
 
 All notable changes and formal Change Requests (CRs) for `hostel-ops` are documented in this file.
 
+## [0.3.0] - 2026-11-22 — CR-008: Documentation Quality Gates, Mutation Counterexamples & Live Rubric Evaluation
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Eliminated documentation drift, broken relative links, unclosed Mermaid diagrams, unresolved placeholders, and hollow marketing claims across `hostel-ops` through deterministic structural/style/market-value checks, 7 seeded negative mutation counterexamples, and live `Ollama` rubric grading.
+- **Traceability:** Branch `feat/cr-008-docs-quality-tests` merged via `--no-ff`; releases `v0.3.0`.
+
+### Added
+- `docs/ARCHITECTURE.md`: Added Level-2 domain architecture with Mermaid topology, ADRs, and trade-off/risk control matrix.
+- `tests/test_docs_quality.py`: `DocQualityAuditor` (`Pydantic v2`), 7 parametrized negative mutation counterexamples (`MISSING_REQUIRED_FILE`, `LANGUAGE_DRIFT_CYRILLIC`, `MISSING_REQUIRED_SECTION`, `PLACEHOLDER_LEAK`, `BROKEN_MERMAID_BLOCK`, `BROKEN_RELATIVE_LINK`, `LOW_MARKET_SIGNAL_OR_HYPE`), and `@pytest.mark.integration` live `Ollama` rubric test (`num_ctx=2048`, `num_predict=160`, `timeout=180.0` tuned for CPU inference on `hippo`).
+- `pyproject.toml`: Standardized version `0.3.0`, `[project.optional-dependencies] dev`, `pythonpath = ["src"]`, and `@pytest.mark.integration` marker.
+
+### Verification Evidence
+- `ruff check src tests`: `All checks passed!`
+- `mypy src tests --strict`: `Success: no issues found`
+- `pytest -v -m "not integration"`: `12 passed, 2 deselected` (including all 7 seeded mutation counterexamples)
+- `pytest -v -m "integration"`: `2 passed, 12 deselected` (live `Ollama` rubric >= 4/5 on real docs and <= 2/5 on weak counterexample)
+
 ## [0.3.0-cr007] - 2026-11-22 — CR-007: Live PostgreSQL GiST Concurrency Race Test & DDL Migration
 ### Objective & Risk Mitigated
 - **Closed Residual Risk:** Caught and eliminated a live schema drift defect on `rhino` where pre-existing `v0.1.0` `bookings` tables bypassed `CREATE TABLE IF NOT EXISTS` without `bookings_no_overlap_excl`; proved under concurrent `asyncio` barrier execution that simultaneous overlapping bookings (`[10, 14)` vs `[12, 16)`) yield exactly 1 commit and 1 `ExclusionViolation` (`23P01`).
