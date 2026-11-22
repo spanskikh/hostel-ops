@@ -2,6 +2,20 @@
 
 All notable changes and formal Change Requests (CRs) for `hostel-ops` are documented in this file.
 
+## [0.5.0] - 2026-11-22 — CR-010 & CR-013: FastMCP `stdio` Contract Harness & Normative SDLC Governance
+### Objective & Risk Mitigated
+- **Closed Residual Risk:** Guaranteed that all agent-facing `FastMCP` `stdio` tools (`audit_hostel_checkin`, `ingest_operator_checkin_note`, `mark_bed_cleaned`) enforce strict Pydantic v2 input schemas and Z3 triple-entry accounting, anti-overbooking, and housekeeping invariants without bypassing validation gates.
+- **Traceability:** Branch `feat/cr-010-mcp-stdio-contracts` merged via `--no-ff`; releases `v0.5.0`.
+
+### Added
+- `tests/test_mcp_contracts.py`: Real `mcp.client.stdio` JSON-RPC discovery (`list_tools()`), input JSON schema verification, `SAT` check-in approval, `UNSAT` rejection of overbooking/dirty-room/unbalanced ledger entries, and Pydantic `ValidationError` rejection on malformed accounts.
+- `DEVPROCESS.md` & `docs/DEFECTS_AND_CAPA.md` (`CAPA-002`): Codified normative SDLC gates, zero-orphan CR traceability, and English-only Git governance.
+
+### Verification Evidence
+- `./scripts/run_logged.sh cr010_ruff` (`logs/20261122-152741_cr010_ruff.log`): `All checks passed!`
+- `./scripts/run_logged.sh cr010_mypy` (`logs/20261122-152741_cr010_mypy.log`): `Success: no issues found in 12 source files`
+- `./scripts/run_logged.sh cr010_pytest` (`logs/20261122-152742_cr010_pytest.log`): `18 passed, 2 deselected`
+
 ## [0.4.0] - 2026-11-22 — CR-009: Dev-Process Auditability, Execution Logging & Release Retrospectives
 ### Objective & Risk Mitigated
 - **Closed Residual Risk:** Eliminated loss of iterative engineering history, unlogged local execution runs, and missing post-release retrospectives across `hostel-ops` by introducing deterministic `.stdout`/`.stderr`/`.log` capture, versioned `docs/dev-log/` artifacts, and mandatory release retrospectives enforced by automated mutation tests.
