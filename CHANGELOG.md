@@ -7,8 +7,13 @@ All notable changes and formal Change Requests (CRs) for `hostel-ops` are docume
 - **Closed Residual Risk:** Caught and eliminated a live schema drift defect on `rhino` where pre-existing `v0.1.0` `bookings` tables bypassed `CREATE TABLE IF NOT EXISTS` without `bookings_no_overlap_excl`; proved under concurrent `asyncio` barrier execution that simultaneous overlapping bookings (`[10, 14)` vs `[12, 16)`) yield exactly 1 commit and 1 `ExclusionViolation` (`23P01`).
 - **Traceability:** Branch `feat/cr-007-live-gist-concurrency` merged via `--no-ff`.
 
+### Defect & Root Cause Analysis (`BUG-001`)
+- **Defect (`BUG-001`):** Concurrent live race test caught two overlapping bookings (`[10, 14)` and `[12, 16)`) succeeding simultaneously on `rhino` despite `CR-004`.
+- **Root Cause:** `CREATE TABLE IF NOT EXISTS bookings (...)` is a silent no-op on tables provisioned in `v0.1.0`, leaving live `bookings` without `bookings_no_overlap_excl` while unit tests only inspected SQL string literals.
+- **Lessons Learned & Process Improvement (`CAPA-001`):** Never rely on `CREATE TABLE IF NOT EXISTS` to evolve constraints or indexes on stateful cluster databases; enforce explicit idempotent `pg_constraint` / `IF NOT EXISTS` DDL guards and require live `@pytest.mark.integration` verification against stateful `rhino` instances before closing DB changes.
+
 ### Added & Fixed
-- `src/hostel_ops/storage.py`: Added idempotent `DO $$ ... ALTER TABLE bookings ADD CONSTRAINT bookings_no_overlap_excl ... $$` migration in `init_schemas()` for pre-existing tables.
+- `src/hostel_ops/storage.py`: Added idempotent `DO $$ ... ALTER TABLE bookings ADD CONSTRAINT bookings_no_overlap_excl ... $$` migration in `init_schemas()` (`BUG-001` fix).
 - `pyproject.toml`: Bumped version to `0.3.0`, added `[project.optional-dependencies] dev`, `pythonpath = ["src"]`, and `@pytest.mark.integration` marker.
 - `tests/test_live_gist_concurrency.py`: Barrier-synchronized concurrent race test verifying DB-level GiST exclusion and `triple_ledger` atomicity.
 
