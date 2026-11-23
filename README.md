@@ -5,6 +5,7 @@
 Transactional backend for check-in operations, housekeeping state transitions, and triple-entry event accounting. Unstructured operator notes are compiled into strict financial-operational proposals and committed to PostgreSQL (`rhino`) only after formal invariant verification in Z3 (`hippo`).
 
 > Part of the [`sandbox-init`](https://github.com/spanskikh/sandbox-init) neuro-symbolic cluster. See [`docs/ARCHITECTURE.md`](https://github.com/spanskikh/sandbox-init/blob/main/docs/ARCHITECTURE.md) for system design and ADRs.
+- **Engineering Profile Dossier:** [`docs/ENGINEERING_PROFILE.md`](docs/ENGINEERING_PROFILE.md) — standardized 5-section competence, stack, process, and QA metrics specification.
 
 ## Transactional & Verification Flow
 ```mermaid
